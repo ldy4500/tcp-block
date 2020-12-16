@@ -14,6 +14,8 @@ struct packet_hdr{
     struct libnet_tcp_hdr tcp_;
 };
 
+
+
 char* pattern;
 char* dev;
 u_int8_t my_mac[6];
@@ -107,6 +109,9 @@ void backward_packet_send(const u_char* packet, pcap_t *handle){
         new_packet->ether_.ether_dhost[i] = packet_hdr->ether_.ether_shost[i];
     }
 
+
+
+
     new_packet->ip_.ip_src = packet_hdr->ip_.ip_dst;
 	new_packet->ip_.ip_dst = packet_hdr->ip_.ip_src;
     //? why? not my ip?
@@ -120,6 +125,10 @@ void backward_packet_send(const u_char* packet, pcap_t *handle){
     new_packet->tcp_.th_ack = htonl(ntohl(packet_hdr->tcp_.th_seq) + data_len);
     
     //printf("%04x",new_packet->tcp_.th_ack)
+
+
+
+
 
 	new_packet->tcp_.th_flags |= 0x11;
     
@@ -149,11 +158,12 @@ void forward_packet_send(const u_char* packet, pcap_t *handle){
 
     int size = sizeof(struct libnet_ethernet_hdr) + (packet_hdr->ip_.ip_hl * 4) + (packet_hdr->tcp_.th_off * 4);
     
-    printf("%d\n", size);
+    // printf("%d\n", size);
 
     int length_data = ntohs(packet_hdr->ip_.ip_len) - (packet_hdr->ip_.ip_hl * 4) - (packet_hdr->tcp_.th_off * 4);
 
-    printf("%d\n", length_data);
+    // printf("%d\n", length_data);
+    
 
     struct packet_hdr *new_packet = (struct packet_hdr*)malloc(size);
 	memcpy(new_packet, packet_hdr, size);
@@ -176,6 +186,8 @@ void forward_packet_send(const u_char* packet, pcap_t *handle){
 	new_packet->tcp_.th_sum = tcp_checksum(&(new_packet->ip_), &(new_packet->tcp_));
 
 	int res = pcap_sendpacket(handle,reinterpret_cast<const u_char*>(&new_packet[0]),size);
+
+
 
 	if(res != 0)
 		printf("Sending forward packet error\n");
@@ -213,6 +225,8 @@ void block_packet(const u_char* packet, pcap_t *handle){
         //printf("not match\n");
         return;
     }
+
+    
 
     printf("found!!!!!!!!!!!!!!!!!\n");
 
