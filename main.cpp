@@ -128,8 +128,6 @@ void backward_packet_send(const u_char* packet, pcap_t *handle){
 
 
 
-
-
 	new_packet->tcp_.th_flags |= 0x11;
     
 	new_packet->ip_.ip_len = htons((packet_hdr->ip_.ip_hl * 4) + (packet_hdr->tcp_.th_off * 4) + strlen(block));
@@ -152,6 +150,8 @@ void backward_packet_send(const u_char* packet, pcap_t *handle){
 
 	free(new_packet);
 }
+
+
 
 void forward_packet_send(const u_char* packet, pcap_t *handle){
     struct packet_hdr *packet_hdr = (struct packet_hdr*)packet;
@@ -226,7 +226,6 @@ void block_packet(const u_char* packet, pcap_t *handle){
         return;
     }
 
-    
 
     printf("found!!!!!!!!!!!!!!!!!\n");
 
